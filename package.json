@@ -19,6 +19,9 @@
     "nodemon": "^3.1.10",
     "pino-pretty": "^13.0.0"
   },
+   "dependencies": {
+    "dotenv": "^X.X.X"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Svitlana-dev/nodejs-hw-01.git"
