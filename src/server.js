@@ -12,6 +12,10 @@ function setupServer() {
   app.use(pino());
   app.use(express.json());
 
+  app.get('/', (req, res) => {
+    res.send('API is running!');
+  });
+
   app.use('/contacts', contactsRouter);
 
   app.use(notFoundHandler);
