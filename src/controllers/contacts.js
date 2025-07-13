@@ -2,11 +2,11 @@ import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
 
 export const getAllContacts = async (req, res) => {
-  const contacts = await contactsService.getAllContacts();
+  const result = await contactsService.getAllContacts(req.query);
   res.status(200).json({
     status: 200,
-    message: 'Contacts retrieved',
-    data: contacts,
+    message: 'Successfully found contacts!',
+    data: result,
   });
 };
 
