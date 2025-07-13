@@ -6,7 +6,16 @@ import initMongoConnection from './db/initMongoConnection.js';
 
 async function main() {
   await initMongoConnection();
-  setupServer();
+
+  const app = setupServer();
+
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 }
 
-main();
+main().catch((err) => {
+  console.error('Startup error:', err.message);
+  process.exit(1);
+});
