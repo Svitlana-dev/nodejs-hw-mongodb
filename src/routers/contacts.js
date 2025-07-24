@@ -14,22 +14,21 @@ import {
   contactCreateSchema,
   contactUpdateSchema,
 } from '../schemas/contactSchemas.js';
+import authenticate from '../middlewares/authenticate.js';
 
 const router = express.Router();
 
+router.use(authenticate);
+
 router.get('/', ctrlWrapper(getAllContacts));
-
 router.get('/:contactId', isValidId, ctrlWrapper(getContactById));
-
 router.post('/', validateBody(contactCreateSchema), ctrlWrapper(createContact));
-
 router.patch(
   '/:contactId',
   isValidId,
   validateBody(contactUpdateSchema),
   ctrlWrapper(updateContact),
 );
-
 router.delete('/:contactId', isValidId, ctrlWrapper(deleteContact));
 
 export default router;
