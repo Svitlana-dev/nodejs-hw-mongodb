@@ -1,5 +1,6 @@
 import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
+import { cloudinary } from '../utils/cloudinary.js';
 
 export const getAllContacts = async (req, res) => {
   const result = await contactsService.getAllContacts(req.query, req.user._id);
@@ -23,16 +24,38 @@ export const getContactById = async (req, res) => {
   });
 };
 
-export const createContact = async (req, res) => {
-  const newContact = await contactsService.createContact(
-    req.body,
-    req.user._id,
-  );
-  res.status(201).json({
-    status: 201,
-    message: 'Successfully created a contact!',
-    data: newContact,
-  });
+export const createContact = async (req, res, next) => {
+  try {
+    const data = { ...req.body };
+
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'image',
+            folder: 'contacts',
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          },
+        );
+        uploadStream.end(req.file.buffer);
+      });
+
+      data.photo = result.secure_url;
+    }
+
+    const newContact = await contactsService.createContact(data, req.user._id);
+
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully created a contact!',
+      data: newContact,
+    });
+  } catch (error) {
+    next(createError(500, error.message));
+  }
 };
 
 export const updateContact = async (req, res) => {
