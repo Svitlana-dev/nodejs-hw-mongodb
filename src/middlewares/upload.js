@@ -25,5 +25,8 @@ const contactPhotoStorage = new CloudinaryStorage({
   },
 });
 
+const memoryStorage = multer.memoryStorage();
+
 export const uploadUserPhoto = multer({ storage: userPhotoStorage });
 export const uploadContactPhoto = multer({ storage: contactPhotoStorage });
+export const uploadMemory = multer({ storage: memoryStorage });
