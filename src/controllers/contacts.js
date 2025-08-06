@@ -58,21 +58,47 @@ export const createContact = async (req, res, next) => {
   }
 };
 
-export const updateContact = async (req, res) => {
-  const { contactId } = req.params;
-  const updated = await contactsService.updateContact(
-    contactId,
-    req.body,
-    req.user._id,
-  );
-  if (!updated) {
-    throw createError(404, 'Contact not found');
+export const updateContact = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+    const data = { ...req.body };
+
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: 'image',
+            folder: 'contacts',
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          },
+        );
+        uploadStream.end(req.file.buffer);
+      });
+
+      data.photo = result.secure_url;
+    }
+
+    const updated = await contactsService.updateContact(
+      contactId,
+      data,
+      req.user._id,
+    );
+
+    if (!updated) {
+      throw createError(404, 'Contact not found');
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: 'Successfully patched a contact!',
+      data: updated,
+    });
+  } catch (error) {
+    next(createError(500, error.message));
   }
-  res.status(200).json({
-    status: 200,
-    message: 'Successfully patched a contact!',
-    data: updated,
-  });
 };
 
 export const deleteContact = async (req, res) => {

@@ -136,8 +136,26 @@ export const resetPassword = async (req, res, next) => {
 export const updateUserAvatar = async (req, res, next) => {
   try {
     const userId = req.user._id;
+    let photoUrl;
 
-    const photoUrl = req.file.path;
+    if (req.file.buffer) {
+      const streamUpload = () =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: 'users' },
+            (error, result) => {
+              if (error) return reject(error);
+              resolve(result);
+            },
+          );
+          stream.end(req.file.buffer);
+        });
+
+      const result = await streamUpload();
+      photoUrl = result.secure_url;
+    } else {
+      photoUrl = req.file.path;
+    }
 
     const user = await User.findByIdAndUpdate(
       userId,
