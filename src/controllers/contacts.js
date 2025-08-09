@@ -2,6 +2,15 @@ import createError from 'http-errors';
 import * as contactsService from '../services/contacts.js';
 import { cloudinary } from '../utils/cloudinary.js';
 
+const uploadBufferToCloudinary = (buffer, folder = 'contacts') =>
+  new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: 'image' },
+      (err, result) => (err ? reject(err) : resolve(result)),
+    );
+    stream.end(buffer);
+  });
+
 export const getAllContacts = async (req, res) => {
   const result = await contactsService.getAllContacts(req.query, req.user._id);
   res.status(200).json({
@@ -14,9 +23,8 @@ export const getAllContacts = async (req, res) => {
 export const getContactById = async (req, res) => {
   const { contactId } = req.params;
   const contact = await contactsService.getContactById(contactId, req.user._id);
-  if (!contact) {
-    throw createError(404, 'Contact not found');
-  }
+  if (!contact) throw createError(404, 'Contact not found');
+
   res.status(200).json({
     status: 200,
     message: 'Contact retrieved',
@@ -28,22 +36,12 @@ export const createContact = async (req, res, next) => {
   try {
     const data = { ...req.body };
 
-    if (req.file) {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            resource_type: 'image',
-            folder: 'contacts',
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          },
-        );
-        uploadStream.end(req.file.buffer);
-      });
-
-      data.photo = result.secure_url;
+    if (req.file?.buffer?.length) {
+      const { secure_url } = await uploadBufferToCloudinary(
+        req.file.buffer,
+        'contacts',
+      );
+      data.photo = secure_url;
     }
 
     const newContact = await contactsService.createContact(data, req.user._id);
@@ -63,22 +61,12 @@ export const updateContact = async (req, res, next) => {
     const { contactId } = req.params;
     const data = { ...req.body };
 
-    if (req.file) {
-      const result = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          {
-            resource_type: 'image',
-            folder: 'contacts',
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          },
-        );
-        uploadStream.end(req.file.buffer);
-      });
-
-      data.photo = result.secure_url;
+    if (req.file?.buffer?.length) {
+      const { secure_url } = await uploadBufferToCloudinary(
+        req.file.buffer,
+        'contacts',
+      );
+      data.photo = secure_url;
     }
 
     const updated = await contactsService.updateContact(
@@ -86,10 +74,7 @@ export const updateContact = async (req, res, next) => {
       data,
       req.user._id,
     );
-
-    if (!updated) {
-      throw createError(404, 'Contact not found');
-    }
+    if (!updated) throw createError(404, 'Contact not found');
 
     res.status(200).json({
       status: 200,
@@ -104,8 +89,6 @@ export const updateContact = async (req, res, next) => {
 export const deleteContact = async (req, res) => {
   const { contactId } = req.params;
   const deleted = await contactsService.removeContact(contactId, req.user._id);
-  if (!deleted) {
-    throw createError(404, 'Contact not found');
-  }
+  if (!deleted) throw createError(404, 'Contact not found');
   res.status(204).send();
 };

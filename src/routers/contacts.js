@@ -8,13 +8,13 @@ import {
   deleteContact,
 } from '../controllers/contacts.js';
 
-import validateBody from '../middlewares/validateBody.js';
+import authenticate from '../middlewares/authenticate.js';
 import isValidId from '../middlewares/isValidId.js';
+import validateBody from '../middlewares/validateBody.js';
 import {
   contactCreateSchema,
   contactUpdateSchema,
 } from '../schemas/contactSchemas.js';
-import authenticate from '../middlewares/authenticate.js';
 import { uploadContactPhoto } from '../middlewares/upload.js';
 
 const router = express.Router();
