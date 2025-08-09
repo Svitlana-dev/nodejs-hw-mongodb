@@ -18,7 +18,7 @@ import {
 } from '../schemas/authSchemas.js';
 
 import authenticate from '../middlewares/authenticate.js';
-import { uploadUserPhoto, uploadMemory } from '../middlewares/upload.js';
+import { uploadUserPhoto } from '../middlewares/upload.js';
 
 const router = express.Router();
 
@@ -39,7 +39,7 @@ router.patch(
 router.patch(
   '/photo-stream',
   authenticate,
-  uploadMemory.single('photo'),
+  uploadUserPhoto.single('photo'),
   updateUserAvatar,
 );
 
