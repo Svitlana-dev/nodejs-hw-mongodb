@@ -13,6 +13,10 @@
     {
       "url": "http://localhost:3000",
       "description": "Local server"
+    },
+    {
+      "url": "https://contactsapp6-cldm.onrender.com",
+      "description": "Production"
     }
   ],
   "security": [

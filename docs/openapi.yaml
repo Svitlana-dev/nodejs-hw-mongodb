@@ -14,9 +14,8 @@ tags:
 servers:
   - url: http://localhost:3000
     description: Local server
-  # Додай свій прод-URL після деплою:
-  # - url: https://<твій-домен-на-render>
-  #   description: Production
+  - url: https://contactsapp6-cldm.onrender.com
+    description: Production
 
 paths:
   /contacts:
