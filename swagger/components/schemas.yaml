@@ -1,0 +1,79 @@
+Contact:
+  type: object
+  properties:
+    id:
+      type: string
+      example: '66c2e7f0d1e8ad3b9f2a4bcd'
+    name:
+      type: string
+      example: 'John Doe'
+    phoneNumber:
+      type: string
+      example: '+380501112233'
+    email:
+      type: string
+      format: email
+      example: 'john@example.com'
+    isFavourite:
+      type: boolean
+      example: true
+    contactType:
+      type: string
+      enum: [work, home, personal]
+      example: 'work'
+  required: [name, phoneNumber]
+
+ContactCreate:
+  type: object
+  required:
+    - name
+    - phoneNumber
+  properties:
+    name:
+      type: string
+      example: 'John Doe'
+    phoneNumber:
+      type: string
+      example: '+380501112233'
+    email:
+      type: string
+      format: email
+    isFavourite:
+      type: boolean
+    contactType:
+      type: string
+      enum: [work, home, personal]
+
+ContactUpdate:
+  type: object
+  properties:
+    name:
+      type: string
+    phoneNumber:
+      type: string
+    email:
+      type: string
+      format: email
+    isFavourite:
+      type: boolean
+    contactType:
+      type: string
+      enum: [work, home, personal]
+  minProperties: 1
+
+ContactsList:
+  type: object
+  properties:
+    page:
+      type: integer
+      example: 1
+    perPage:
+      type: integer
+      example: 10
+    total:
+      type: integer
+      example: 25
+    items:
+      type: array
+      items:
+        $ref: '#/Contact'
