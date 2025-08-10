@@ -1,0 +1,18 @@
+tags: [Contacts]
+summary: Delete contact
+operationId: deleteContact
+description: Видаляє контакт.
+security:
+  - bearerAuth: []
+parameters:
+  - name: contactId
+    in: path
+    required: true
+    schema: { type: string }
+responses:
+  '204':
+    $ref: '../../../components/responses.yaml#/NoContent'
+  '401':
+    $ref: '../../../components/responses.yaml#/Unauthorized'
+  '404':
+    $ref: '../../../components/responses.yaml#/NotFound'

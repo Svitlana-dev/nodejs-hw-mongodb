@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: Contacts API
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: REST API для керування контактами з авторизацією Bearer JWT.
+
+tags:
+  - name: Contacts
+    description: Операції з контактами
+
+servers:
+  - url: http://localhost:3000
+    description: Local server
+  # Додай свій прод-URL після деплою:
+  # - url: https://<твій-домен-на-render>
+  #   description: Production
+
+paths:
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
+
+  /contacts/{contactId}:
+    get:
+      $ref: ../swagger/paths/contacts/{contactId}/get.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{contactId}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{contactId}/delete.yaml
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  # Підключаємо зовнішні файли компонентів
+  schemas:
+    $ref: ../swagger/components/schemas.yaml
+  responses:
+    $ref: ../swagger/components/responses.yaml
+
+# За замовчуванням усі ендпоінти під Bearer, можна прибрати на публічних
+security:
+  - bearerAuth: []
