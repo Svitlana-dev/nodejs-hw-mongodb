@@ -2,22 +2,24 @@ tags: [Contacts]
 summary: Create contact
 operationId: createContact
 description: Створює новий контакт.
-security:
-  - bearerAuth: []
+security: [{ bearerAuth: [] }]
 requestBody:
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
-        $ref: '../../components/schemas.yaml#/ContactCreate'
+        $ref: '../../components/schemas.yaml#/ContactCreateFormData'
 responses:
   '201':
-    $ref: '../../components/responses.yaml#/Created'
+    description: Created
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas.yaml#/Contact'
-  '400':
-    $ref: '../../components/responses.yaml#/BadRequest'
-  '401':
-    $ref: '../../components/responses.yaml#/Unauthorized'
+          allOf:
+            - $ref: '../../components/schemas.yaml#/ResponseOk'
+            - type: object
+              properties:
+                data:
+                  $ref: '../../components/schemas.yaml#/Contact'
+  '400': { $ref: '../../components/responses.yaml#/BadRequest' }
+  '401': { $ref: '../../components/responses.yaml#/Unauthorized' }
