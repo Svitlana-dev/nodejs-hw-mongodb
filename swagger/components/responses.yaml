@@ -1,36 +1,37 @@
 Ok:
   description: Success
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/ResponseOk'
+
 Created:
   description: Created
+  content:
+    application/json:
+      schema:
+        $ref: './schemas.yaml#/ResponseOk'
+
 NoContent:
   description: No content
+
 BadRequest:
   description: Bad request
   content:
     application/json:
       schema:
-        type: object
-        properties:
-          message:
-            type: string
-            example: 'Validation error'
+        $ref: './schemas.yaml#/ResponseError'
+
 Unauthorized:
   description: Unauthorized
   content:
     application/json:
       schema:
-        type: object
-        properties:
-          message:
-            type: string
-            example: 'Unauthorized'
+        $ref: './schemas.yaml#/ResponseError'
+
 NotFound:
   description: Resource not found
   content:
     application/json:
       schema:
-        type: object
-        properties:
-          message:
-            type: string
-            example: 'Contact not found'
+        $ref: './schemas.yaml#/ResponseError'

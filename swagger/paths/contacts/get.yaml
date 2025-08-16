@@ -2,8 +2,7 @@ tags: [Contacts]
 summary: List contacts
 operationId: listContacts
 description: Отримати список контактів з пагінацією та фільтрами.
-security:
-  - bearerAuth: []
+security: [{ bearerAuth: [] }]
 parameters:
   - in: query
     name: page
@@ -22,10 +21,14 @@ parameters:
     schema: { type: boolean }
 responses:
   '200':
-    $ref: '../../components/responses.yaml#/Ok'
+    description: Contacts list
     content:
       application/json:
         schema:
-          $ref: '../../components/schemas.yaml#/ContactsList'
-  '401':
-    $ref: '../../components/responses.yaml#/Unauthorized'
+          allOf:
+            - $ref: '../../components/schemas.yaml#/ResponseOk'
+            - type: object
+              properties:
+                data:
+                  $ref: '../../components/schemas.yaml#/ContactsList'
+  '401': { $ref: '../../components/responses.yaml#/Unauthorized' }

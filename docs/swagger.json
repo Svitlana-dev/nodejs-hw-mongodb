@@ -99,11 +99,23 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/Ok",
+            "description": "Contacts list",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ContactsList"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ResponseOk"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/ContactsList"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -128,20 +140,32 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ContactCreate"
+                "$ref": "#/components/schemas/ContactCreateFormData"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "$ref": "#/components/responses/Created",
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Contact"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ResponseOk"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Contact"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -180,11 +204,23 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/Ok",
+            "description": "Contact",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../../../components/schemas.yaml#/Contact"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ResponseOk"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Contact"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -222,20 +258,32 @@
         "requestBody": {
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
-                "$ref": "#/components/schemas/ContactUpdate"
+                "$ref": "#/components/schemas/ContactUpdateFormData"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "$ref": "#/components/responses/Ok",
+            "description": "Updated contact",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "../../../components/schemas.yaml#/Contact"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ResponseOk"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/Contact"
+                        }
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -274,8 +322,30 @@
           }
         ],
         "responses": {
-          "204": {
-            "$ref": "#/components/responses/NoContent"
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ResponseOk"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "example": {
+                            "id": "66b6f7f4c8d3a0c0c7a9b111"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -296,12 +366,28 @@
       }
     },
     "schemas": {
+      "ResponseOk": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Success"
+          },
+          "data": {
+            "nullable": true
+          }
+        }
+      },
       "Contact": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "example": "66c2e7f0d1e8ad3b9f2a4bcd"
+            "example": "66b6f7f4c8d3a0c0c7a9b111"
           },
           "name": {
             "type": "string",
@@ -313,12 +399,12 @@
           },
           "email": {
             "type": "string",
-            "format": "email",
+            "nullable": true,
             "example": "john@example.com"
           },
           "isFavourite": {
             "type": "boolean",
-            "example": true
+            "example": false
           },
           "contactType": {
             "type": "string",
@@ -327,10 +413,24 @@
               "home",
               "personal"
             ],
-            "example": "work"
+            "example": "personal"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "nullable": true,
+            "example": "https://res.cloudinary.com/demo/image/upload/avatar.jpg"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "required": [
+          "id",
           "name",
           "phoneNumber"
         ]
@@ -338,6 +438,12 @@
       "ContactsList": {
         "type": "object",
         "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          },
           "page": {
             "type": "integer",
             "example": 1
@@ -348,49 +454,61 @@
           },
           "total": {
             "type": "integer",
-            "example": 25
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Contact"
-            }
+            "example": 0
           }
         }
       },
-      "ContactCreate": {
+      "ResponseError": {
         "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "example": 400
+          },
+          "message": {
+            "type": "string",
+            "example": "Validation error"
+          },
+          "data": {
+            "nullable": true
+          }
+        }
+      },
+      "ContactCreateFormData": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "isFavourite": {
+            "type": "boolean"
+          },
+          "contactType": {
+            "type": "string",
+            "enum": [
+              "work",
+              "home",
+              "personal"
+            ]
+          },
+          "avatar": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
         "required": [
           "name",
           "phoneNumber"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "John Doe"
-          },
-          "phoneNumber": {
-            "type": "string",
-            "example": "+380501112233"
-          },
-          "email": {
-            "type": "string",
-            "format": "email"
-          },
-          "isFavourite": {
-            "type": "boolean"
-          },
-          "contactType": {
-            "type": "string",
-            "enum": [
-              "work",
-              "home",
-              "personal"
-            ]
-          }
-        }
+        ]
       },
-      "ContactUpdate": {
+      "ContactUpdateFormData": {
         "type": "object",
         "properties": {
           "name": {
@@ -413,46 +531,32 @@
               "home",
               "personal"
             ]
+          },
+          "avatar": {
+            "type": "string",
+            "format": "binary"
           }
         },
         "minProperties": 1
       }
     },
     "responses": {
-      "Ok": {
-        "description": "Success"
-      },
       "Unauthorized": {
         "description": "Unauthorized",
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "Unauthorized"
-                }
-              }
+              "$ref": "#/components/schemas/ResponseError"
             }
           }
         }
-      },
-      "Created": {
-        "description": "Created"
       },
       "BadRequest": {
         "description": "Bad request",
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "Validation error"
-                }
-              }
+              "$ref": "#/components/schemas/ResponseError"
             }
           }
         }
@@ -462,13 +566,27 @@
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string",
-                  "example": "Contact not found"
-                }
-              }
+              "$ref": "#/components/schemas/ResponseError"
+            }
+          }
+        }
+      },
+      "Ok": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseOk"
+            }
+          }
+        }
+      },
+      "Created": {
+        "description": "Created",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseOk"
             }
           }
         }

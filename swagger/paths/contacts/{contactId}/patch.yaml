@@ -2,8 +2,7 @@ tags: [Contacts]
 summary: Update contact
 operationId: updateContact
 description: Оновлює існуючий контакт.
-security:
-  - bearerAuth: []
+security: [{ bearerAuth: [] }]
 parameters:
   - name: contactId
     in: path
@@ -12,19 +11,21 @@ parameters:
 requestBody:
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
-        $ref: '../../../components/schemas.yaml#/ContactUpdate'
+        $ref: '../../../components/schemas.yaml#/ContactUpdateFormData'
 responses:
   '200':
-    $ref: '../../../components/responses.yaml#/Ok'
+    description: Updated contact
     content:
       application/json:
         schema:
-          $ref: '../../../components/schemas.yaml#/Contact'
-  '400':
-    $ref: '../../../components/responses.yaml#/BadRequest'
-  '401':
-    $ref: '../../../components/responses.yaml#/Unauthorized'
-  '404':
-    $ref: '../../../components/responses.yaml#/NotFound'
+          allOf:
+            - $ref: '../../../components/schemas.yaml#/ResponseOk'
+            - type: object
+              properties:
+                data:
+                  $ref: '../../../components/schemas.yaml#/Contact'
+  '400': { $ref: '../../../components/responses.yaml#/BadRequest' }
+  '401': { $ref: '../../../components/responses.yaml#/Unauthorized' }
+  '404': { $ref: '../../../components/responses.yaml#/NotFound' }
