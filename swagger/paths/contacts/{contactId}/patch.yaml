@@ -1,11 +1,10 @@
-tags: [Contacts]
 summary: Update contact
 operationId: updateContact
-description: Оновлює існуючий контакт.
+tags: [Contacts]
 security: [{ bearerAuth: [] }]
 parameters:
-  - name: contactId
-    in: path
+  - in: path
+    name: contactId
     required: true
     schema: { type: string }
 requestBody:
@@ -16,7 +15,7 @@ requestBody:
         $ref: '../../../components/schemas.yaml#/ContactUpdateFormData'
 responses:
   '200':
-    description: Updated contact
+    description: Updated
     content:
       application/json:
         schema:

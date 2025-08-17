@@ -1,37 +1,45 @@
 Ok:
-  description: Success
+  description: Successful response
   content:
     application/json:
       schema:
-        $ref: './schemas.yaml#/ResponseOk'
+        $ref: '../components/schemas.yaml#/ResponseOk'
 
 Created:
-  description: Created
+  description: Successfully created
   content:
     application/json:
       schema:
-        $ref: './schemas.yaml#/ResponseOk'
+        $ref: '../components/schemas.yaml#/ResponseOk'
+
+Updated:
+  description: Successfully updated
+  content:
+    application/json:
+      schema:
+        $ref: '../components/schemas.yaml#/ResponseOk'
 
 NoContent:
-  description: No content
+  description: Successfully deleted (no content)
+  content: {}
 
 BadRequest:
   description: Bad request
   content:
     application/json:
       schema:
-        $ref: './schemas.yaml#/ResponseError'
+        $ref: '../components/schemas.yaml#/ResponseError'
 
 Unauthorized:
   description: Unauthorized
   content:
     application/json:
       schema:
-        $ref: './schemas.yaml#/ResponseError'
+        $ref: '../components/schemas.yaml#/ResponseError'
 
 NotFound:
-  description: Resource not found
+  description: Not found
   content:
     application/json:
       schema:
-        $ref: './schemas.yaml#/ResponseError'
+        $ref: '../components/schemas.yaml#/ResponseError'

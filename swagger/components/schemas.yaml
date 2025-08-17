@@ -6,17 +6,50 @@ Contact:
     phoneNumber: { type: string, example: '+380501112233' }
     email: { type: string, nullable: true, example: 'john@example.com' }
     isFavourite: { type: boolean, example: false }
-    contactType:
-      type: string
-      enum: [work, home, personal]
-      example: personal
-    avatarUrl:
-      type: string
-      nullable: true
-      example: 'https://res.cloudinary.com/demo/image/upload/avatar.jpg'
-    createdAt: { type: string, format: date-time }
-    updatedAt: { type: string, format: date-time }
-  required: [id, name, phoneNumber]
+    contactType: { type: string, enum: [work, home, personal], example: 'work' }
+    photo:
+      {
+        type: string,
+        nullable: true,
+        example: 'https://res.cloudinary.com/demo/image/upload/abc.jpg',
+      }
+    createdAt:
+      { type: string, format: date-time, example: '2025-08-16T09:41:01.450Z' }
+    updatedAt:
+      { type: string, format: date-time, example: '2025-08-16T09:41:01.450Z' }
+  required: [id, name, phoneNumber, contactType, createdAt, updatedAt]
+
+ContactsList:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: '#/Contact'
+    page: { type: integer, example: 1 }
+    perPage: { type: integer, example: 10 }
+    totalItems: { type: integer, example: 2 }
+    totalPages: { type: integer, example: 1 }
+    hasNextPage: { type: boolean, example: false }
+    hasPreviousPage: { type: boolean, example: false }
+  required:
+    [items, page, perPage, totalItems, totalPages, hasNextPage, hasPreviousPage]
+
+ResponseOk:
+  type: object
+  properties:
+    status: { type: integer, example: 200 }
+    message: { type: string, example: 'Success' }
+    data: { type: object, nullable: true, additionalProperties: true }
+  required: [status, message]
+
+ResponseError:
+  type: object
+  properties:
+    status: { type: integer, example: 400 }
+    message: { type: string, example: 'Validation error' }
+    data: { type: object, nullable: true, additionalProperties: true }
+  required: [status, message]
 
 ContactCreateFormData:
   type: object
@@ -26,9 +59,7 @@ ContactCreateFormData:
     email: { type: string, format: email }
     isFavourite: { type: boolean }
     contactType: { type: string, enum: [work, home, personal] }
-    avatar:
-      type: string
-      format: binary
+    photo: { type: string, format: binary }
   required: [name, phoneNumber]
 
 ContactUpdateFormData:
@@ -39,31 +70,5 @@ ContactUpdateFormData:
     email: { type: string, format: email }
     isFavourite: { type: boolean }
     contactType: { type: string, enum: [work, home, personal] }
-    avatar:
-      type: string
-      format: binary
+    photo: { type: string, format: binary }
   minProperties: 1
-
-ContactsList:
-  type: object
-  properties:
-    items:
-      type: array
-      items: { $ref: '#/Contact' }
-    page: { type: integer, example: 1 }
-    perPage: { type: integer, example: 10 }
-    total: { type: integer, example: 0 }
-
-ResponseOk:
-  type: object
-  properties:
-    status: { type: integer, example: 200 }
-    message: { type: string, example: 'Success' }
-    data: { nullable: true }
-
-ResponseError:
-  type: object
-  properties:
-    status: { type: integer, example: 400 }
-    message: { type: string, example: 'Validation error' }
-    data: { nullable: true }

@@ -10,29 +10,32 @@ export const getAllContacts = async (query, userId) => {
     isFavourite,
   } = query;
 
-  const skip = (page - 1) * perPage;
+  const pageNum = Number(page);
+  const limitNum = Number(perPage);
+  const skip = (pageNum - 1) * limitNum;
   const sort = { [sortBy]: sortOrder === 'desc' ? -1 : 1 };
 
   const filter = { userId };
   if (type) filter.contactType = type;
-  if (typeof isFavourite !== 'undefined')
-    filter.isFavourite = isFavourite === 'true';
+  if (typeof isFavourite !== 'undefined') {
+    filter.isFavourite = isFavourite === true || isFavourite === 'true';
+  }
 
   const totalItems = await Contact.countDocuments(filter);
-  const totalPages = Math.ceil(totalItems / perPage);
-  const contacts = await Contact.find(filter)
+  const totalPages = Math.max(1, Math.ceil(totalItems / limitNum));
+  const items = await Contact.find(filter)
     .sort(sort)
     .skip(skip)
-    .limit(Number(perPage));
+    .limit(limitNum);
 
   return {
-    data: contacts,
-    page: Number(page),
-    perPage: Number(perPage),
+    items,
+    page: pageNum,
+    perPage: limitNum,
     totalItems,
     totalPages,
-    hasPreviousPage: page > 1,
-    hasNextPage: page < totalPages,
+    hasPreviousPage: pageNum > 1,
+    hasNextPage: pageNum < totalPages,
   };
 };
 
