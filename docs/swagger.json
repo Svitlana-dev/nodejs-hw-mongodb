@@ -33,12 +33,11 @@
   "paths": {
     "/contacts": {
       "get": {
+        "summary": "List contacts",
+        "operationId": "listContacts",
         "tags": [
           "Contacts"
         ],
-        "summary": "List contacts",
-        "operationId": "listContacts",
-        "description": "Отримати список контактів з пагінацією та фільтрами.",
         "security": [
           {
             "bearerAuth": []
@@ -74,7 +73,8 @@
                 "email",
                 "phoneNumber",
                 "createdAt"
-              ]
+              ],
+              "default": "name"
             }
           },
           {
@@ -87,6 +87,18 @@
                 "desc"
               ],
               "default": "asc"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "work",
+                "home",
+                "personal"
+              ]
             }
           },
           {
@@ -126,12 +138,11 @@
         }
       },
       "post": {
+        "summary": "Create contact",
+        "operationId": "createContact",
         "tags": [
           "Contacts"
         ],
-        "summary": "Create contact",
-        "operationId": "createContact",
-        "description": "Створює новий контакт.",
         "security": [
           {
             "bearerAuth": []
@@ -181,12 +192,11 @@
     },
     "/contacts/{contactId}": {
       "get": {
+        "summary": "Get contact by id",
+        "operationId": "getContactById",
         "tags": [
           "Contacts"
         ],
-        "summary": "Get contact by id",
-        "operationId": "getContactById",
-        "description": "Повертає контакт за його ідентифікатором.",
         "security": [
           {
             "bearerAuth": []
@@ -204,7 +214,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Contact",
+            "description": "Found",
             "content": {
               "application/json": {
                 "schema": {
@@ -234,12 +244,11 @@
         }
       },
       "patch": {
+        "summary": "Update contact",
+        "operationId": "updateContact",
         "tags": [
           "Contacts"
         ],
-        "summary": "Update contact",
-        "operationId": "updateContact",
-        "description": "Оновлює існуючий контакт.",
         "security": [
           {
             "bearerAuth": []
@@ -247,8 +256,8 @@
         ],
         "parameters": [
           {
-            "name": "contactId",
             "in": "path",
+            "name": "contactId",
             "required": true,
             "schema": {
               "type": "string"
@@ -267,7 +276,7 @@
         },
         "responses": {
           "200": {
-            "description": "Updated contact",
+            "description": "Updated",
             "content": {
               "application/json": {
                 "schema": {
@@ -300,12 +309,11 @@
         }
       },
       "delete": {
+        "summary": "Delete contact",
+        "operationId": "deleteContact",
         "tags": [
           "Contacts"
         ],
-        "summary": "Delete contact",
-        "operationId": "deleteContact",
-        "description": "Видаляє контакт.",
         "security": [
           {
             "bearerAuth": []
@@ -322,30 +330,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "Deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ResponseOk"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "data": {
-                          "type": "object",
-                          "example": {
-                            "id": "66b6f7f4c8d3a0c0c7a9b111"
-                          }
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+          "204": {
+            "$ref": "#/components/responses/NoContent"
           },
           "401": {
             "$ref": "#/components/responses/Unauthorized"
@@ -378,9 +364,15 @@
             "example": "Success"
           },
           "data": {
-            "nullable": true
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
           }
-        }
+        },
+        "required": [
+          "status",
+          "message"
+        ]
       },
       "Contact": {
         "type": "object",
@@ -413,26 +405,31 @@
               "home",
               "personal"
             ],
-            "example": "personal"
+            "example": "work"
           },
-          "avatarUrl": {
+          "photo": {
             "type": "string",
             "nullable": true,
-            "example": "https://res.cloudinary.com/demo/image/upload/avatar.jpg"
+            "example": "https://res.cloudinary.com/demo/image/upload/abc.jpg"
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2025-08-16T09:41:01.450Z"
           },
           "updatedAt": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "example": "2025-08-16T09:41:01.450Z"
           }
         },
         "required": [
           "id",
           "name",
-          "phoneNumber"
+          "phoneNumber",
+          "contactType",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "ContactsList": {
@@ -452,11 +449,32 @@
             "type": "integer",
             "example": 10
           },
-          "total": {
+          "totalItems": {
             "type": "integer",
-            "example": 0
+            "example": 2
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 1
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "example": false
+          },
+          "hasPreviousPage": {
+            "type": "boolean",
+            "example": false
           }
-        }
+        },
+        "required": [
+          "items",
+          "page",
+          "perPage",
+          "totalItems",
+          "totalPages",
+          "hasNextPage",
+          "hasPreviousPage"
+        ]
       },
       "ResponseError": {
         "type": "object",
@@ -470,9 +488,15 @@
             "example": "Validation error"
           },
           "data": {
-            "nullable": true
+            "type": "object",
+            "nullable": true,
+            "additionalProperties": true
           }
-        }
+        },
+        "required": [
+          "status",
+          "message"
+        ]
       },
       "ContactCreateFormData": {
         "type": "object",
@@ -498,7 +522,7 @@
               "personal"
             ]
           },
-          "avatar": {
+          "photo": {
             "type": "string",
             "format": "binary"
           }
@@ -532,7 +556,7 @@
               "personal"
             ]
           },
-          "avatar": {
+          "photo": {
             "type": "string",
             "format": "binary"
           }
@@ -562,7 +586,7 @@
         }
       },
       "NotFound": {
-        "description": "Resource not found",
+        "description": "Not found",
         "content": {
           "application/json": {
             "schema": {
@@ -571,8 +595,12 @@
           }
         }
       },
+      "NoContent": {
+        "description": "Successfully deleted (no content)",
+        "content": {}
+      },
       "Ok": {
-        "description": "Success",
+        "description": "Successful response",
         "content": {
           "application/json": {
             "schema": {
@@ -582,7 +610,7 @@
         }
       },
       "Created": {
-        "description": "Created",
+        "description": "Successfully created",
         "content": {
           "application/json": {
             "schema": {
@@ -591,8 +619,15 @@
           }
         }
       },
-      "NoContent": {
-        "description": "No content"
+      "Updated": {
+        "description": "Successfully updated",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseOk"
+            }
+          }
+        }
       }
     }
   }
