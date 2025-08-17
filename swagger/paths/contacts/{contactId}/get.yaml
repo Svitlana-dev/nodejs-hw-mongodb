@@ -1,7 +1,6 @@
-tags: [Contacts]
 summary: Get contact by id
 operationId: getContactById
-description: Повертає контакт за його ідентифікатором.
+tags: [Contacts]
 security: [{ bearerAuth: [] }]
 parameters:
   - name: contactId
@@ -10,7 +9,7 @@ parameters:
     schema: { type: string }
 responses:
   '200':
-    description: Contact
+    description: Found
     content:
       application/json:
         schema:

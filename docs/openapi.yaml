@@ -39,12 +39,10 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
-  # Підключаємо зовнішні файли компонентів
   schemas:
     $ref: ../swagger/components/schemas.yaml
   responses:
     $ref: ../swagger/components/responses.yaml
 
-# За замовчуванням усі ендпоінти під Bearer, можна прибрати на публічних
 security:
   - bearerAuth: []

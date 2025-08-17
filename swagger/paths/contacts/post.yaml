@@ -1,7 +1,6 @@
-tags: [Contacts]
 summary: Create contact
 operationId: createContact
-description: Створює новий контакт.
+tags: [Contacts]
 security: [{ bearerAuth: [] }]
 requestBody:
   required: true
